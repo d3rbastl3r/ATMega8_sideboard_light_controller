@@ -1,6 +1,8 @@
 /**
  * Daytime based sideboard light controller which should activate light when some drawer is open.
  *
+ * PC0: Light Sensor (ADC0)
+ *
  * @author Igor Martens
  * @since 30.12.2018
  */
@@ -60,8 +62,16 @@ void pushByteAndLatch(uint8_t byte) {
     PORTD &= ~(1 << PD7);
 }
 
+void setupLEDLightPorts() {
+    // LED panel I
+    DDRB |= (1<<DDB0);
+    DDRB |= (1<<DDB1);
+    DDRB |= (1<<DDB6);
+}
+
 void setup() {
     setupADC();
+    setupLEDLightPorts();
     setupRegisterPorts(); /** DEBUG ONLY **/
 }
 
@@ -74,6 +84,18 @@ int main(void) {
 
         uint8_t val = ADCH;            // read value from ADC
         pushByteAndLatch(val);
+
+        PORTB |= (1<<PB0);
+		_delay_ms(1000);
+		PORTB &= ~(1<<PB0);
+
+		PORTB |= (1<<PB1);
+		_delay_ms(1000);
+		PORTB &= ~(1<<PB1);
+
+		PORTB |= (1<<PB6);
+		_delay_ms(1000);
+		PORTB &= ~(1<<PB6);
     }
 
     return 0;
